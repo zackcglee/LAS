@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import exceptions.LasMappingFailedException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -132,13 +133,14 @@ public class TreeNode implements Serializable {
 		return matched != null;
 	}
 
-	public void setMatched(TreeNode matched){
+	public void setMatched(TreeNode matched) throws LasMappingFailedException {
 		if(this.matched != null){
-			System.err.println("Already matched to "+this.matched+", but tried to match again with "+matched);
-			StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-			for (StackTraceElement traceElement : trace)
-				System.err.println("\tat " + traceElement);
-			System.exit(1);
+			throw new LasMappingFailedException("Already matched to "+this.matched+", but tried to match again with "+matched);
+			//System.err.println("Already matched to "+this.matched+", but tried to match again with "+matched);
+//			StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+//			for (StackTraceElement traceElement : trace)
+//				System.err.println("\tat " + traceElement);
+//			System.exit(1);
 		}
 		this.matched = matched;
 	}

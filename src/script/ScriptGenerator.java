@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import exceptions.LasMappingFailedException;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import script.model.Delete;
@@ -209,8 +210,13 @@ public class ScriptGenerator {
 	 * @param after an AST after a change.
 	 */
 	private static void match(Tree before, Tree after) {
-		before.getRoot().setMatched(after.getRoot());
-		after.getRoot().setMatched(before.getRoot());
+		try {
+			before.getRoot().setMatched(after.getRoot());
+			after.getRoot().setMatched(before.getRoot());
+		} catch (LasMappingFailedException e) {
+			e.printStackTrace();
+		}
+
 		if(ENABLE_EXACT_MATCH)
 			exactMatch(before.getRoot().children, after.getRoot().children, before, after);
 		similarMatch(before, after);
@@ -226,8 +232,13 @@ public class ScriptGenerator {
 					if(node.getParent() != null && node.getParent().isMatched()){
 						for(TreeNode child : node.getParent().getMatched().children){
 							if(!child.isMatched() && child.getType() == ASTNode.BLOCK){
-								node.setMatched(child);
-								child.setMatched(node);
+								try {
+									node.setMatched(child);
+									child.setMatched(node);
+								} catch (LasMappingFailedException e) {
+									e.printStackTrace();
+								}
+
 								followupMatch += 2;
 								break;
 							}
@@ -245,8 +256,13 @@ public class ScriptGenerator {
 					if(node.getParent() != null && node.getParent().isMatched()){
 						for(TreeNode child : node.getParent().getMatched().children){
 							if(!child.isMatched() && child.getType() == ASTNode.BLOCK){
-								node.setMatched(child);
-								child.setMatched(node);
+								try {
+									node.setMatched(child);
+									child.setMatched(node);
+								} catch (LasMappingFailedException e) {
+									e.printStackTrace();
+								}
+
 								followupMatch += 2;
 								break;
 							}
@@ -275,8 +291,13 @@ public class ScriptGenerator {
 					//If parents are also matched, it is the match.
 					if(nodeParent != null && !nodeParent.isMatched()
 							&& nodeParent.getMatched() == candidateParent){
-						node.setMatched(candidate);
-						candidate.setMatched(node);
+						try {
+							node.setMatched(candidate);
+							candidate.setMatched(node);
+						} catch (LasMappingFailedException e) {
+							e.printStackTrace();
+						}
+
 						followupMatch += 2;
 						return;
 					}
@@ -294,8 +315,13 @@ public class ScriptGenerator {
 		}
 
 		if(match != null){
-			node.setMatched(match);
-			match.setMatched(node);
+			try {
+				node.setMatched(match);
+				match.setMatched(node);
+			} catch (LasMappingFailedException e) {
+				e.printStackTrace();
+			}
+
 			followupMatch += 2;
 		}
 	}
@@ -388,8 +414,13 @@ public class ScriptGenerator {
 			TreeNode match = node.getBestMatch();
 			if(match != null && !match.isMatched()
 					&& node.equals(match.getBestMatch())){
-				node.setMatched(match);
-				match.setMatched(node);
+				try {
+					node.setMatched(match);
+					match.setMatched(node);
+				} catch (LasMappingFailedException e) {
+					e.printStackTrace();
+				}
+
 				similarMatch += 2;
 				similarMatch(node.children, match.children);
 			}
@@ -399,8 +430,13 @@ public class ScriptGenerator {
 			TreeNode match = node.getBestMatch();
 			if(match != null && !match.isMatched()
 					&& node.equals(match.getBestMatch())){
-				node.setMatched(match);
-				match.setMatched(node);
+				try {
+					node.setMatched(match);
+					match.setMatched(node);
+				} catch (LasMappingFailedException e) {
+					e.printStackTrace();
+				}
+
 				similarMatch += 2;
 				similarMatch(node.children, match.children);
 			}
@@ -472,8 +508,13 @@ public class ScriptGenerator {
 					for (TreeNode candidate : candidates) {
 						if (!candidate.isMatched() &&
 								leaf.getLabel().equals(candidate.getLabel())) {
-							leaf.setMatched(candidate);
-							candidate.setMatched(leaf);
+							try {
+								leaf.setMatched(candidate);
+								candidate.setMatched(leaf);
+							} catch (LasMappingFailedException e) {
+								e.printStackTrace();
+							}
+
 							leafMatch += 2;
 							matched.add(leaf);
 							break;
@@ -487,8 +528,13 @@ public class ScriptGenerator {
 					for (TreeNode candidate : candidates) {
 						if (!candidate.isMatched() &&
 								leaf.getType() == candidate.getType()) {
-							leaf.setMatched(candidate);
-							candidate.setMatched(leaf);
+							try {
+								leaf.setMatched(candidate);
+								candidate.setMatched(leaf);
+							} catch (LasMappingFailedException e) {
+								e.printStackTrace();
+							}
+
 							leafMatch += 2;
 							matched.add(leaf);
 							break;
@@ -654,8 +700,13 @@ public class ScriptGenerator {
 	}
 
 	private static void updateMatch(TreeNode beforeNode, TreeNode afterNode) {
-		beforeNode.setMatched(afterNode);
-		afterNode.setMatched(beforeNode);
+		try {
+			beforeNode.setMatched(afterNode);
+			afterNode.setMatched(beforeNode);
+		} catch (LasMappingFailedException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private static int updateChildMatch(TreeNode beforeNode, TreeNode afterNode) {
